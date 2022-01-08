@@ -1,24 +1,21 @@
-import numpy as np
+import  numpy as np
 import matplotlib.pyplot as plt
-from datetime import datetime
+from datetime import  datetime
 
-###pumping of 1-bright-soliton using Rice-Mele model
-Delta0=-5
-delta0=-5
-J=10
-T=10
-omega = 2*np.pi/T
-# tilt strength
-omegaF = 0.5
+
+#calculates pumping for real t1 != t2
 k0=-0.3
 k1=1+0.3j
-Gamma=10
+t1Val=2
+t2Val=2
+s=1/2*(t1Val+t2Val)
+Gamma=0
 
 phi11s=np.log(1/(
     4*(np.sinh(1/2*(k1+np.conj(k1))))**2
 ))
-tTot=100
-Q=50000
+tTot=10
+Q=5000
 dt=tTot/Q
 print("dt="+str(dt))
 nStart=-100
@@ -26,37 +23,23 @@ L=200#lattice length
 nRange=range(nStart,nStart+L)
 N=int(L/2)
 
-#funcs of perturbation
-def w(t):
-    return -J+delta0*np.sin(omega*t)
-
-def v(t):
-    return -J-delta0*np.sin(omega*t)
 
 def f(t):
-    return -Delta0*np.cos(omega*t)
-
+    return 0
 def g(t):
-    return Delta0*np.cos(omega*t)
+    return 0
 
 def A1(t):
-    return w(t)*np.exp(-1j*omegaF*t)
-
+    return t1Val
 def A2(t):
-    return v(t)*np.exp(1j*omegaF*t)
-
+    return t2Val
 def B1(t):
-    return v(t)*np.exp(-1j*omegaF*t)
-
+    return t1Val
 def B2(t):
-    return w(t)*np.exp(1j*omegaF*t)
-
+    return t2Val
 def m(t):
-    #omegaF !=0
-    # return np.exp(-1j*k0-k1)*J/omegaF*(np.exp(-1j*omegaF*t)-1)\
-    #         -np.exp(1j*k0+k1)*J/omegaF*(np.exp(1j*omegaF*t)-1)
-    #omegaF=0
-    return -1j*J*np.exp(-1j*k0-k1)*t-1j*J*np.exp(1j*k0+k1)*t
+    return 1j*np.exp(-1j*k0-k1)*s*t+1j*np.exp(1j*k0+k1)*s*t
+
 
 
 def y(n,t):
