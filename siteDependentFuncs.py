@@ -14,7 +14,7 @@ k1 = 0.4 + 1.8j
 s = 11
 
 Gmax = 0.1
-Gamma = 0
+# Gamma = 0
 
 phi11s = np.log(1 / (
         4 * (np.sinh(1 / 2 * (k1 + np.conj(k1)))) ** 2
@@ -28,7 +28,34 @@ nStart = -2000
 L = 2 * 2000  # lattice length
 nRange = range(nStart, nStart + L)
 
+# np.random.seed(0)
 
+def m(t):
+    return  1j * np.exp(-1j * k0 - k1) * s * t + 1j * np.exp(1j * k0 + k1) * s * t
+
+def y(n, t):
+    """
+
+    :param n:
+    :param t:
+    :return: exact 1-bright-soliton solution
+    """
+    return mpmath.exp(k1 * n + m(t)) / (1 +
+                                        mpmath.exp((k1 + np.conj(k1)) * n + m(t) + mpmath.conj(m(t)) + phi11s
+                                                   )
+                                        ) * mpmath.exp(1j * k0 * n + 1j * Gamma * t)
+
+initVecmp=[y(n,0) for n in nRange]
+initVec=[complex(elem) for elem in initVecmp]
+# mu=0
+# ratio=10
+# sgm=np.max(np.abs(initVec))/ratio
+# randomField0=np.random.normal(mu,sgm,L)
+# randomField1=np.random.normal(mu,sgm,L)
+# randomField2=np.random.normal(mu,sgm,L)
+# randomField3=np.random.normal(mu,sgm,L)
+# onSiteRandom0=np.random.normal(mu,sgm,L)
+# onSiteRandom1=np.random.normal(mu,sgm,L)
 def f(t):
     return 0
 
@@ -73,42 +100,37 @@ def B2(t):
         return s - Gmax
 
 
-def m(t):
-    return 1j * Gamma * t + 1j * np.exp(-1j * k0 - k1) * s * t + 1j * np.exp(1j * k0 + k1) * s * t
+
 
 
 def Cn(n, t):
     if n % 2 == 0:
-        return A1(t)
+        return A1(t)#+randomField0[n]
     else:
-        return B1(t)
+        return B1(t)#+randomField1[n]
 
 
 def Dn(n, t):
     if n % 2 == 0:
-        return A2(t)
+        return A2(t)#+randomField2[n]
     else:
-        return B2(t)
+        return B2(t)#+randomField3[n]
+
+strength=650
+def impurity(n):
+    if n==200:
+        return strength
+    else:
+        return 0
 
 
 def En(n, t):
     if n % 2 == 0:
-        return Gamma + f(t)
+        return Gamma + f(t)+impurity(n)#+onSiteRandom0[n]
     else:
-        return Gamma + g(t)
+        return Gamma + g(t)+impurity(n)#+onSiteRandom1[n]
 
 
-def y(n, t):
-    """
-
-    :param n:
-    :param t:
-    :return: exact 1-bright-soliton solution
-    """
-    return mpmath.exp(k1 * n + m(t)) / (1 +
-                                        mpmath.exp((k1 + np.conj(k1)) * n + m(t) + mpmath.conj(m(t)) + phi11s
-                                                   )
-                                        ) * mpmath.exp(1j * k0 * n + 1j * Gamma * t)
 
 
 ####calc position expectation

@@ -9,21 +9,22 @@ mp.dps=100
 k0=0.13
 k1=0.4+1.8j
 s=11
-g=0.3
-t1Val=s-g
-t2Val=s+g
-
-Gamma=0
+# g=0.3
+# t1Val=s-g
+# t2Val=s+g
+Gmax=0.1
+# Gamma=0
 
 phi11s=np.log(1/(
     4*(np.sinh(1/2*(k1+np.conj(k1))))**2
 ))
-tTot=15
-Q=5000
+tHalf=10
+tTot=2*tHalf
+Q=10000
 dt=tTot/Q
 print("dt="+str(dt))
-nStart=-1000
-L=2000#lattice length
+nStart=-2000
+L=2*2000#lattice length
 nRange=range(nStart,nStart+L)
 N=int(L/2)
 
@@ -32,15 +33,32 @@ def f(t):
     return 0
 def g(t):
     return 0
+def minusFunc(t):
+    return s-Gmax/tHalf*t
+
+def plusFunction(t):
+    return s+Gmax/tHalf*t
 
 def A1(t):
-    return t1Val
+    if t<tHalf:
+        return minusFunc(t)
+    else:
+        return s-Gmax
 def A2(t):
-    return t2Val
+    if t<tHalf:
+        return plusFunction(t)
+    else:
+        return s+Gmax
 def B1(t):
-    return t2Val
+    if t<tHalf:
+        return plusFunction(t)
+    else:
+        return s+Gmax
 def B2(t):
-    return t1Val
+    if t<tHalf:
+        return minusFunc(t)
+    else:
+        return s-Gmax
 def m(t):
     return 1j*np.exp(-1j*k0-k1)*s*t+1j*np.exp(1j*k0+k1)*s*t
 
@@ -109,6 +127,7 @@ def M0Vec(psiVec,q):
     retM0=[]
     tq=dt*q
     #0
+
     retM0.append(
         dt*1j*A2(tq)*psiVec[1]*(1+np.abs(psiVec[0])**2)+dt*(1j*Gamma+1j*f(tq))*psiVec[1]
     )
