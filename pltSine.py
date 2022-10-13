@@ -3,17 +3,18 @@ import matplotlib.pyplot as plt
 import numpy as np
 from datetime import datetime
 
-#this script plots the evolution of soliton-like solution with quadratic evolution in 3d plot, and plots the variation of width
-GVal=13
-inDir="./siteDependent7/quadratic/coef0.99/0s12Gmax"+str(GVal)+"tTot100a10.1coefPi0.99Q100000/"
-inFileName=inDir+"Gmax="+str(GVal)+", tTot=100data.csv"
+#this script plots the evolution of soliton-like solution in 3d plot, and plots the variation of width
+GVal=1
+inDir="./siteDependent7/sin/coef0.99/0s12Gmax"+str(GVal)+"tTot500a10.1coefPi0.99Q500000/"
+inFileName=inDir+"Gmax="+str(G)+", tTot=100data.csv"
+
 tReadCsvStart=datetime.now()
 inData=pd.read_csv(inFileName,header=None)
 tReadCsvEnd=datetime.now()
 print("reading csv: ",tReadCsvEnd-tReadCsvStart)
 nRow, L=inData.shape
 
-tTot=100
+tTot=500
 Q=nRow-1
 
 dt=tTot/Q
@@ -38,12 +39,11 @@ def strVec2ComplexVecAbs(row):
     for elem in row:
         retVec.append(np.abs(complex(elem)))
     return retVec
-numOfPics=30
-sep=int((Q+1)/numOfPics)
-pltQVals=list(range(0,Q,sep))
+
+pltQVals=list(range(0,Q,10000))
 pltQVals.append(Q)
 t3dStart=datetime.now()
-truncation=300
+truncation=L
 for q in pltQVals:
     tValsTmp=[dt*q]*L
     ax1.plot(sites[:truncation],tValsTmp[:truncation],strVec2ComplexVecAbs(inData.iloc[q,])[:truncation],color="black")
@@ -119,7 +119,7 @@ ax2yticks=np.linspace(min(widthVals),max(widthVals),5)
 ax2.set_yticks(ax2yticks)
 ax2.set_title("variation of width",fontsize=ftSize)
 
-
+# ax2.set_yticks(range(8,11))
 
 tWidthEnd=datetime.now()
 print("width time: ", tWidthEnd-tWidthStart)
@@ -131,17 +131,17 @@ tSkewnessVals=[q*dt for q in pltSkewnessQVals]
 skewnessVals=[skewness(strVec2ComplexVec(inData.iloc[q,])) for q in pltSkewnessQVals]
 ax3=fig.add_subplot(2,2,3)
 ax3.plot(tSkewnessVals,skewnessVals,color="black")
-ax3.ticklabel_format(axis='y', scilimits=(-1,-1))
+# ax3.ticklabel_format(axis='y', scilimits=(-1,-1))
 ax3.set_ylim((min(skewnessVals)-1e-2,max(skewnessVals)+1e-2))
 ax3yticks=list(np.linspace(min(skewnessVals),max(skewnessVals),5))
 ax3yticks.append(0)
 ax3.set_yticks(ax3yticks)
-
 ax3.set_xlabel("time",fontsize=ftSize)
 ax3.set_ylabel("skewness",fontsize=ftSize)
 ax3.set_title("variation of skewness",fontsize=ftSize)
 tSkewnessEnd=datetime.now()
 print("Skewness time: ",tSkewnessEnd-tSkewnessStart)
+
 
 tOneDriftStart=datetime.now()
 qPlot=int(Q/2)
@@ -165,6 +165,9 @@ print("drift time: ",tOneDriftEnd-tOneDriftStart)
 
 
 
+
+
+
 fig.suptitle("SSH-I, quadratic evolution with $G=$"+str(GVal),fontsize=ftSize)
-plt.savefig(inDir+"SSHIQuadratic"+"G"+str(GVal)+".png")
+plt.savefig(inDir+"SSHISine"+"G"+str(GVal)+".png")
 plt.close()
