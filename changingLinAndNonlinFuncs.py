@@ -18,7 +18,7 @@ s = 12
 
 Gmax = 6
 
-tTot=50
+tTot=100
 Q=100000
 dt=tTot/Q
 print("dt=" + str(dt))
